@@ -1,0 +1,9 @@
+version: "2"
+sql:
+  - engine: "postgresql"
+    schema: "db/migrations"
+    queries: "db/queries"
+    gen:
+      go:
+        out: "internal/db"   # Diretório onde serão gerados os arquivos Go
+        package: "db"        # Nome do pacote

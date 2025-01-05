@@ -1,0 +1,31 @@
+version: "3.8"
+services:
+  auth-service:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_URL=postgres://chatgpt_user:senha_segura@db:5432/auth_service?sslmode=disable
+      - JWT_SECRET=minha_senha_secreta
+    depends_on:
+      - db
+      - migrate
+
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: chatgpt_user
+      POSTGRES_PASSWORD: senha_segura
+      POSTGRES_DB: auth_service
+    ports:
+      - "5432:5432"
+
+  migrate:
+    image: migrate/migrate
+    volumes:
+      - ./db/migrations:/migrations
+    entrypoint: [ "migrate", "-path", "/migrations", "-database", "postgres://chatgpt_user:senha_segura@db:5432/auth_service?sslmode=disable", "up" ]
+    depends_on:
+      - db
